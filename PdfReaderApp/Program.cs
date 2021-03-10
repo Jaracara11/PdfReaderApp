@@ -8,7 +8,7 @@ namespace PdfReaderApp
         {
             Reader pdf = new Reader();
 
-            pdf.PdftoCsv();
+            pdf.SortText();
         }
     }
 }

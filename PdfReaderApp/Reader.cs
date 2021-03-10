@@ -1,12 +1,10 @@
-﻿using iText.Kernel.Pdf;
+﻿using CsvHelper;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PdfReaderApp
 {
@@ -14,18 +12,18 @@ namespace PdfReaderApp
     {
         public string TextFromPdf()
         {
-            var path = @$"c:/users/{Environment.UserName}/desktop/Precios.pdf";
-            var pageContent = "";
+            var pdfPath = @$"c:/users/{Environment.UserName}/desktop/Precios.pdf";
+            var pdfContent = "";
 
             try
             {
-                PdfReader pdfReader = new PdfReader(path);
+                PdfReader pdfReader = new PdfReader(pdfPath);
                 PdfDocument pdfDoc = new PdfDocument(pdfReader);
 
                 for (var i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
                 {
                     ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
-                    pageContent = PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i), strategy);
+                    pdfContent = PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i), strategy);
                 }
 
                 pdfDoc.Close();
@@ -36,22 +34,31 @@ namespace PdfReaderApp
                 Console.WriteLine(ex.Message);
             }
 
-            return pageContent;
+            return pdfContent;
         }
 
-        public void PdftoCsv()
+        public void PdfToCsv()
+        {
+            var csvOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.csv";
+            var text = TextFromPdf();
+            var writer = new StreamWriter(csvOutput);
+            var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+            csv.WriteHeader<CsvHeaders>();
+
+            csv.WriteRecords(text);
+
+            writer.Flush();
+        }
+
+        public void SortText()
         {
             var textOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.txt";
             var text = TextFromPdf();
-            var preciosTxt = File.Create(textOutput);
 
-            var textArray = text.ToArray();
+            string[] textArray = text.Split(Environment.NewLine);
 
-            foreach (var i in textArray)
-            {
-                File.WriteAllLines(textOutput, i);
-            }
+            File.WriteAllLines(textOutput, textArray);
         }
     }
 }
-i
