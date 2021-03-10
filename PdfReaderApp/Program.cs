@@ -6,7 +6,9 @@ namespace PdfReaderApp
     {
         static void Main(string[] args)
         {
-            
+            Reader pdf = new Reader();
+
+            Console.WriteLine(pdf.PdftoCsv()); 
         }
     }
 }
