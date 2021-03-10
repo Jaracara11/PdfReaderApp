@@ -12,24 +12,29 @@ namespace PdfReaderApp
 {
     public class Reader
     {
-        private string Text { get; set; }
-
-        public string TextFromPDF()
+        public string TextFromPdf()
         {
             var path = @$"c:/users/{Environment.UserName}/desktop/Precios.pdf";
             var pageContent = "";
 
-            PdfReader pdfReader = new PdfReader(path);
-            PdfDocument pdfDoc = new PdfDocument(pdfReader);
-
-            for (var i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
+            try
             {
-                ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
-                pageContent = PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i), strategy);
-            }
+                PdfReader pdfReader = new PdfReader(path);
+                PdfDocument pdfDoc = new PdfDocument(pdfReader);
 
-            pdfDoc.Close();
-            pdfReader.Close();
+                for (var i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
+                {
+                    ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+                    pageContent = PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(i), strategy);
+                }
+
+                pdfDoc.Close();
+                pdfReader.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             return pageContent;
         }
@@ -37,19 +42,16 @@ namespace PdfReaderApp
         public void PdftoCsv()
         {
             var textOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.txt";
-            var text = TextFromPDF();
-            var textArray = new string[] { };
+            var text = TextFromPdf();
+            var preciosTxt = File.Create(textOutput);
 
-            foreach(var t in text)
+            var textArray = text.ToArray();
+
+            foreach (var i in textArray)
             {
-                File.WriteAllText
-            }
-
-
-            for (var i = 0; i<textArray.Length; i++)
-            {
-                File.WriteAllLines(textOutput, textArray);
+                File.WriteAllLines(textOutput, i);
             }
         }
     }
 }
+i
