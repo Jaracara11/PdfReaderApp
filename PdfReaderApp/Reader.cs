@@ -3,6 +3,7 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
@@ -55,10 +56,29 @@ namespace PdfReaderApp
         {
             var textOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.txt";
             var text = TextFromPdf();
+            var removeChars = new string[] { "*", "República Dominicana",
+                "MERCADOS DOMINICANOS DE ABASTO AGROPECUARIO ",
+                "PRODUCTOS", "UNIDAD DE", "MEDIDA", "PRECIOS POR",
+                "PRECIOS DE", "DETALLE", "MAYOR", "           ", "      "
+                ,"  ", "Nota: precios dereferencia, suministrados por los",
+            "productores, sujetos a variación.",
+                "Busca las banderitas de especiales del 8 al 10 de",
+            "marzo 2021.", "MERCA SANTO DOMINGO", "DEL 9 DE MARZODEL 2021 (RD$)",
+            "km.22, Autopista Duarte, Avenida Merca Santo ",
+            "Domingo, Tel: 829-541-6464", "http:/www.mercadom.gob.doMail:",
+            "info@mercadom.gob.do", "-", "LB", "PAQ.", "UD"};
 
-            string[] textArray = text.Split(Environment.NewLine);
+            var textList = new List<string> { text };
 
-            File.WriteAllLines(textOutput, textArray);
+            for (var i = 0; i < textList.Count; i++)
+            {
+                for (var x = 0; x < removeChars.Length; x++)
+                {
+                    textList[i] = textList[i].Replace(removeChars[x], "");
+                }
+            }
+
+            File.WriteAllLines(textOutput, textList);
         }
     }
 }
