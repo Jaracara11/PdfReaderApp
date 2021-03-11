@@ -2,6 +2,7 @@
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using PdfReaderApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace PdfReaderApp
 {
-    public class Reader
+    public class ReaderController
     {
         public static string GetTextFromPdf()
         {
@@ -74,7 +75,7 @@ namespace PdfReaderApp
             {
                 foreach (var line in lines)
                 {
-                    if (Regex.Match(line, Options.RegexMatchProduct).Success)
+                    if (Regex.Match(line, RegexPatterns.MatchProducts).Success)
                     {
                         textList.Add(line);
                     }
@@ -87,6 +88,35 @@ namespace PdfReaderApp
             
             return textList;
         }
+
+        public static void RegexEditor()
+        {
+            List<ProductData> productList = new List<ProductData>();
+
+            var products = ArrangeText();
+
+            foreach (var product in products)
+            {
+                Match m;
+
+                m.
+
+
+
+                if (Regex.Match(product, RegexPatterns.MatchProductName).Success)
+                {
+                    productList.Add(new ProductData() { Nombre = $"{product}"});
+                }
+            }
+
+
+
+            //productList.Add(new ProductData() { Nombre = "Apio", PrecioPorMayor = 10, PrecioAlDetalle = 13});
+
+            Console.WriteLine(productList);
+        }
+
+
 
         public static void WriteDataToCsv()
         {

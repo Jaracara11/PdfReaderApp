@@ -11,8 +11,6 @@ namespace PdfReaderApp
 
         public static string CsvOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.csv";
 
-        public static string RegexMatchProduct = @"[a-zA-Z0-9]";
-
         public static List<string> CharsToRemove = new List<string>()
         {
             "*", "República Dominicana",
