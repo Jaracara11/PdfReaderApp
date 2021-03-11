@@ -7,7 +7,7 @@ namespace PdfReaderApp
     {
         public static string PdfPath = @$"c:/users/{Environment.UserName}/desktop/Precios.pdf";
 
-        public static string PdfOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.txt";
+        public static string TextOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.txt";
 
         public static string CsvOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.csv";
 
