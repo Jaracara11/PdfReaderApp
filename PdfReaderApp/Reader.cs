@@ -44,7 +44,7 @@ namespace PdfReaderApp
             var text = GetTextFromPdf();
             var textList = new List<string> { text };
             var removeChars = new List<string>(Options.CharsToRemove);
-            var textOutput = Options.PdfOutput;
+            var textOutput = Options.TextOutput;
 
             try
             {
@@ -68,7 +68,7 @@ namespace PdfReaderApp
         {
             SaveTextFromPdf();
             var textList = new List<string>();
-            var lines = File.ReadAllLines(Options.PdfOutput);
+            var lines = File.ReadAllLines(Options.TextOutput);
 
             try
             {
