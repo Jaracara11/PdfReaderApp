@@ -6,21 +6,22 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace PdfReaderApp
 {
     public class Reader
     {
-        public string TextFromPdf()
+        public static string GetTextFromPdf()
         {
-            var pdfPath = @$"c:/users/{Environment.UserName}/desktop/Precios.pdf";
+            var pdfPath = Options.PdfPath;
             var pdfContent = "";
+
+            PdfReader pdfReader = new(pdfPath);
+            PdfDocument pdfDoc = new(pdfReader);
 
             try
             {
-                PdfReader pdfReader = new PdfReader(pdfPath);
-                PdfDocument pdfDoc = new PdfDocument(pdfReader);
-
                 for (var i = 1; i <= pdfDoc.GetNumberOfPages(); i++)
                 {
                     ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
@@ -38,47 +39,71 @@ namespace PdfReaderApp
             return pdfContent;
         }
 
-        public void PdfToCsv()
+        public static void SaveTextFromPdf()
         {
-            var csvOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.csv";
-            var text = TextFromPdf();
+            var text = GetTextFromPdf();
+            var textList = new List<string> { text };
+            var removeChars = new List<string>(Options.CharsToRemove);
+            var textOutput = Options.PdfOutput;
+
+            try
+            {
+                for (var i = 0; i < textList.Count; i++)
+                {
+                    for (var x = 0; x < removeChars.Count; x++)
+                    {
+                        textList[i] = textList[i].Replace(removeChars[x], "");
+                    }
+                }
+
+                File.WriteAllLines(textOutput, textList);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public static List<string> ArrangeText()
+        {
+            SaveTextFromPdf();
+            var textList = new List<string>();
+            var lines = File.ReadAllLines(Options.PdfOutput);
+
+            try
+            {
+                foreach (var line in lines)
+                {
+                    if (Regex.Match(line, Options.RegexMatchProduct).Success)
+                    {
+                        textList.Add(line);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+            return textList;
+        }
+
+        public static void WriteDataToCsv()
+        {
+            var textList = ArrangeText();
+            var csvOutput = Options.CsvOutput;
             var writer = new StreamWriter(csvOutput);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            csv.WriteHeader<CsvHeaders>();
+            //csv.WriteHeader<CsvHeaders>();
 
-            csv.WriteRecords(text);
-
-            writer.Flush();
-        }
-
-        public void SortText()
-        {
-            var textOutput = @$"c:/users/{Environment.UserName}/desktop/Precios.txt";
-            var text = TextFromPdf();
-            var removeChars = new string[] { "*", "República Dominicana",
-                "MERCADOS DOMINICANOS DE ABASTO AGROPECUARIO ",
-                "PRODUCTOS", "UNIDAD DE", "MEDIDA", "PRECIOS POR",
-                "PRECIOS DE", "DETALLE", "MAYOR", "           ", "      "
-                ,"  ", "Nota: precios dereferencia, suministrados por los",
-            "productores, sujetos a variación.",
-                "Busca las banderitas de especiales del 8 al 10 de",
-            "marzo 2021.", "MERCA SANTO DOMINGO", "DEL 9 DE MARZODEL 2021 (RD$)",
-            "km.22, Autopista Duarte, Avenida Merca Santo ",
-            "Domingo, Tel: 829-541-6464", "http:/www.mercadom.gob.doMail:",
-            "info@mercadom.gob.do", "-", "LB", "PAQ.", "UD"};
-
-            var textList = new List<string> { text };
-
-            for (var i = 0; i < textList.Count; i++)
+            foreach (var item in textList)
             {
-                for (var x = 0; x < removeChars.Length; x++)
-                {
-                    textList[i] = textList[i].Replace(removeChars[x], "");
-                }
+                csv.WriteField(item);
+                csv.NextRecord();
             }
 
-            File.WriteAllLines(textOutput, textList);
+            writer.Flush();
         }
     }
 }
