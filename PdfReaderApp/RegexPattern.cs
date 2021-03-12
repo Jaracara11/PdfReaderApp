@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PdfReaderApp
 {
-    public class Options
+    public class RegexPattern
     {
         public static string PdfPath = @$"c:/users/{Environment.UserName}/desktop/Precios.pdf";
 
