@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PdfReaderApp
@@ -85,6 +86,26 @@ namespace PdfReaderApp
             {
                 Console.WriteLine(ex.Message);
             }
+
+            foreach (var line in textList)
+            {
+                var split = line.Split(" ").Reverse();
+
+
+                var reversedWords = new string[] { split.reverse };
+
+                foreach (var item in reversedWords)
+                {
+                    var unity = reversedWords[0];
+                    var lot = reversedWords[1];
+                    var name = string.Join(" ", reverseWords.Skip(2).Reverse());
+                }
+
+            }
+
+
+
+
 
             return textList;
         }
