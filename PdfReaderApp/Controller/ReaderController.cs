@@ -70,7 +70,7 @@ namespace PdfReaderApp
                     if (Regex.Match(line, RegexPattern.MatchProducts).Success &&
                         Regex.Match(line, RegexPattern.MatchPrices).Success)
                     {
-                        var resultText = RegexReplaceText(line, "", RegexPattern.MatchWhiteSpaces);
+                        var resultText = RegexReplaceText(line, " ", RegexPattern.MatchWhiteSpaces);
 
                         for (var i = 0; i < removeChars.Count; i++)
                         {
@@ -98,10 +98,6 @@ namespace PdfReaderApp
             foreach (var product in products)
             {
                 Match m;
-
-
-
-
 
                 if (Regex.Match(product, RegexPattern.MatchProducts).Success)
                 {
