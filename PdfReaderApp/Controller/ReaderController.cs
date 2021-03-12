@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace PdfReaderApp
 {
@@ -15,7 +16,7 @@ namespace PdfReaderApp
     {
         public static string GetTextFromPdf()
         {
-            var pdfPath = Options.PdfPath;
+            var pdfPath = Path.PdfPath;
             var pdfContent = "";
 
             PdfReader pdfReader = new(pdfPath);
@@ -44,8 +45,8 @@ namespace PdfReaderApp
         {
             var text = GetTextFromPdf();
             var textList = new List<string> { text };
-            var removeChars = new List<string>(Options.CharsToRemove);
-            var textOutput = Options.TextOutput;
+            var removeChars = new List<string>(RegexPattern.StringsToRemove);
+            var textOutput = Path.TextOutput;
 
             try
             {
@@ -69,23 +70,24 @@ namespace PdfReaderApp
         {
             SaveTextFromPdf();
             var textList = new List<string>();
-            var lines = File.ReadAllLines(Options.TextOutput);
+            var lines = File.ReadAllLines(Path.TextOutput);
 
             try
             {
                 foreach (var line in lines)
                 {
-                    if (Regex.Match(line, RegexPatterns.MatchProducts).Success)
+
+                    if (Regex.Match(line, RegexPattern.MatchProducts).Success)
                     {
                         textList.Add(line);
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            
+
             return textList;
         }
 
@@ -99,13 +101,13 @@ namespace PdfReaderApp
             {
                 Match m;
 
-                m.
 
 
 
-                if (Regex.Match(product, RegexPatterns.MatchProductName).Success)
+
+                if (Regex.Match(product, RegexPattern.MatchProductName).Success)
                 {
-                    productList.Add(new ProductData() { Nombre = $"{product}"});
+                    productList.Add(new ProductData() { Nombre = $"{product}" });
                 }
             }
 
@@ -121,7 +123,7 @@ namespace PdfReaderApp
         public static void WriteDataToCsv()
         {
             var textList = ArrangeText();
-            var csvOutput = Options.CsvOutput;
+            var csvOutput = Path.CsvOutput;
             var writer = new StreamWriter(csvOutput);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
