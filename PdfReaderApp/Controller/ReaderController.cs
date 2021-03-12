@@ -111,14 +111,10 @@ namespace PdfReaderApp
                 }
             }
 
-
-
             //productList.Add(new ProductData() { Nombre = "Apio", PrecioPorMayor = 10, PrecioAlDetalle = 13});
 
             Console.WriteLine(productList);
         }
-
-
 
         public static void WriteDataToCsv()
         {

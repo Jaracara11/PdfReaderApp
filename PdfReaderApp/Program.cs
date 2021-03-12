@@ -5,7 +5,7 @@ namespace PdfReaderApp
     {
         static void Main(string[] args)
         {
-            ReaderController.RegexEditor();
+            ReaderController.WriteDataToCsv();
         }
     }
 }
