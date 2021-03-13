@@ -12,6 +12,8 @@ namespace PdfReaderApp.Services
 
         public static string MatchNewLine = ".+";
 
+        public static string MatchProductName = "[A-Za-z]";
+
         public static string MatchProductPricePorMayor = "[a-zA-Z0-9]";
 
         public static string MatchProductPriceAlDetalle = "[a-zA-Z0-9]";

@@ -63,6 +63,13 @@ namespace PdfReaderApp
                 }
             }
 
+            foreach(var line in textList)
+            {
+                RegexServices.GetProductName(line);
+
+                Console.WriteLine(line);
+            }
+
             return textList;
         }
 
@@ -82,7 +89,7 @@ namespace PdfReaderApp
                 }
             }
 
-            //productList.Add(new ProductData() { Nombre = "Apio", PrecioPorMayor = 10, PrecioAlDetalle = 13});
+            productList.Add(new ProductData() { Nombre = "Apio", PrecioPorMayor = 10, PrecioAlDetalle = 13});
 
             Console.WriteLine(productList);
         }

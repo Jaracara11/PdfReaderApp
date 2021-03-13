@@ -24,5 +24,17 @@ namespace PdfReaderApp.Services
 
             return result;
         }
+
+        public static string GetProductName(string product)
+        {
+            var productName = "";
+
+            foreach (Match match in Regex.Matches(product, RegexPattern.MatchProductName))
+            {
+                productName = match.ToString();
+            }
+
+            return productName;
+        }
     }
 }
