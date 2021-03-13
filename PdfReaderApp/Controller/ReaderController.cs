@@ -3,11 +3,11 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using PdfReaderApp.Models;
+using PdfReaderApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PdfReaderApp
@@ -41,71 +41,27 @@ namespace PdfReaderApp
             return pdfContent;
         }
 
-        public static void SaveTextFromPdf()
-        {
-            var text = GetTextFromPdf();
-            var textList = new List<string> { text };
-            var textOutput = Path.TextOutput;
-
-            try
-            {
-                File.WriteAllLines(textOutput, textList);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
         public static List<string> ArrangeText()
         {
-            SaveTextFromPdf();
+            var text = RegexServices.GetTextByLine(GetTextFromPdf());
             var textList = new List<string>();
-            var lines = File.ReadAllLines(Path.TextOutput);
             var removeChars = new List<string>(RegexPattern.CharsToRemove);
 
-            try
+            foreach (var line in text)
             {
-                foreach (var line in lines)
+                if (Regex.Match(line, RegexPattern.MatchProducts).Success &&
+                    Regex.Match(line, RegexPattern.MatchPrices).Success)
                 {
-                    if (Regex.Match(line, RegexPattern.MatchProducts).Success &&
-                        Regex.Match(line, RegexPattern.MatchPrices).Success)
+                    var resultText = RegexServices.ReplaceText(line, " ", RegexPattern.MatchWhiteSpaces);
+
+                    for (var i = 0; i < removeChars.Count; i++)
                     {
-                        var resultText = RegexReplaceText(line, " ", RegexPattern.MatchWhiteSpaces);
-
-                        for (var i = 0; i < removeChars.Count; i++)
-                        {
-                            resultText = resultText.Replace(removeChars[i], "");
-                        }
-
-                        textList.Add(resultText);
+                        resultText = resultText.Replace(removeChars[i], "");
                     }
+
+                    textList.Add(resultText);
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-            foreach (var line in textList)
-            {
-                var split = line.Split(" ").Reverse();
-
-
-                var reversedWords = new string[] { split.reverse };
-
-                foreach (var item in reversedWords)
-                {
-                    var unity = reversedWords[0];
-                    var lot = reversedWords[1];
-                    var name = string.Join(" ", reverseWords.Skip(2).Reverse());
-                }
-
-            }
-
-
-
-
 
             return textList;
         }
@@ -147,14 +103,6 @@ namespace PdfReaderApp
             }
 
             writer.Flush();
-        }
-
-        public static string RegexReplaceText(string oldText, string newText, string pattern)
-        {
-            var rgx = new Regex(pattern);
-            var result = rgx.Replace(oldText, newText);
-
-            return result;
         }
     }
 }

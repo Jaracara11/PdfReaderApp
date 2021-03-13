@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace PdfReaderApp.Models
+namespace PdfReaderApp.Services
 {
     public static class RegexPattern
     {
         public static string MatchProducts = "[a-zA-Z0-9]";
 
-        public static string MatchPrices = "[0-9]+";
+        public static string MatchPrices = "0{2}";
 
         public static string MatchWhiteSpaces = @"\s+";
+
+        public static string MatchNewLine = ".+";
 
         public static string MatchProductPricePorMayor = "[a-zA-Z0-9]";
 
