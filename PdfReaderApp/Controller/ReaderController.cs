@@ -69,6 +69,8 @@ namespace PdfReaderApp
             {
                 var productName = Regex.Match(product, RegexPattern.MatchProductName).Value;
 
+                productName = productName.Replace("Ñ", "NIA");
+
                 var prices = RegexServices.ReplaceText(product, "", RegexPattern.MatchProductName);
 
                 var priceUnity = Regex.Match(prices, RegexPattern.MatchProductPriceAlDetalle).Value;
@@ -83,7 +85,6 @@ namespace PdfReaderApp
             return productList;
         }
 
-
         public static void WriteDataToCsv()
         {
             var textList = ProductList();
@@ -91,11 +92,14 @@ namespace PdfReaderApp
             var writer = new StreamWriter(csvOutput);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            //csv.WriteHeader<CsvHeaders>();
+            csv.WriteHeader<CsvHeaders>();
+            csv.NextRecord();
 
             foreach (var item in textList)
             {
-                csv.WriteField(item.ToString());
+                csv.WriteField(item.Nombre);
+                csv.WriteField(item.PrecioPorMayor);
+                csv.WriteField(item.PrecioAlDetalle);
                 csv.NextRecord();
             }
 
