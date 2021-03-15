@@ -3,6 +3,7 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using PdfReaderApp.Models;
+using PdfReaderApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -40,100 +41,69 @@ namespace PdfReaderApp
             return pdfContent;
         }
 
-        public static void SaveTextFromPdf()
+        public static List<ProductData> ProductList()
         {
-            var text = GetTextFromPdf();
-            var textList = new List<string> { text };
-            var textOutput = Path.TextOutput;
-
-            try
-            {
-                File.WriteAllLines(textOutput, textList);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        public static List<string> ArrangeText()
-        {
-            SaveTextFromPdf();
+            var text = RegexServices.GetTextByLine(GetTextFromPdf());
             var textList = new List<string>();
-            var lines = File.ReadAllLines(Path.TextOutput);
             var removeChars = new List<string>(RegexPattern.CharsToRemove);
 
-            try
+            foreach (var line in text)
             {
-                foreach (var line in lines)
+                if (Regex.Match(line, RegexPattern.MatchProducts).Success &&
+                    Regex.Match(line, RegexPattern.MatchPrices).Success)
                 {
-                    if (Regex.Match(line, RegexPattern.MatchProducts).Success &&
-                        Regex.Match(line, RegexPattern.MatchPrices).Success)
+                    var resultText = RegexServices.ReplaceText(line, "", RegexPattern.MatchWhiteSpaces);
+
+                    for (var i = 0; i < removeChars.Count; i++)
                     {
-                        var resultText = RegexReplaceText(line, " ", RegexPattern.MatchWhiteSpaces);
-
-                        for (var i = 0; i < removeChars.Count; i++)
-                        {
-                            resultText = resultText.Replace(removeChars[i], "");
-                        }
-
-                        textList.Add(resultText);
+                        resultText = resultText.Replace(removeChars[i], "");
                     }
+
+                    textList.Add(resultText);
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
 
-            return textList;
-        }
-
-        public static void RegexEditor()
-        {
             List<ProductData> productList = new List<ProductData>();
 
-            var products = ArrangeText();
-
-            foreach (var product in products)
+            foreach (var product in textList)
             {
-                Match m;
+                var productName = Regex.Match(product, RegexPattern.MatchProductName).Value;
 
-                if (Regex.Match(product, RegexPattern.MatchProducts).Success)
-                {
-                    productList.Add(new ProductData() { Nombre = $"{product}" });
-                }
+                productName = productName.Replace("Ñ", "NIA");
+
+                var prices = RegexServices.ReplaceText(product, "", RegexPattern.MatchProductName);
+
+                var priceUnity = Regex.Match(prices, RegexPattern.MatchProductPriceAlDetalle).Value;
+
+                var priceLot = RegexServices.ReplaceText(prices, "", RegexPattern.MatchProductPriceAlDetalle);
+
+                productList.Add(new ProductData() { Nombre = productName, PrecioPorMayor = priceLot,
+                    PrecioAlDetalle = priceUnity
+                });
             }
 
-            //productList.Add(new ProductData() { Nombre = "Apio", PrecioPorMayor = 10, PrecioAlDetalle = 13});
-
-            Console.WriteLine(productList);
+            return productList;
         }
 
         public static void WriteDataToCsv()
         {
-            var textList = ArrangeText();
+            var textList = ProductList();
             var csvOutput = Path.CsvOutput;
             var writer = new StreamWriter(csvOutput);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            //csv.WriteHeader<CsvHeaders>();
+            csv.WriteHeader<CsvHeaders>();
+            csv.NextRecord();
 
             foreach (var item in textList)
             {
-                csv.WriteField(item);
+                csv.WriteField(item.Nombre);
+                csv.WriteField(item.PrecioPorMayor);
+                csv.WriteField(item.PrecioAlDetalle);
                 csv.NextRecord();
             }
 
             writer.Flush();
-        }
-
-        public static string RegexReplaceText(string oldText, string newText, string pattern)
-        {
-            var rgx = new Regex(pattern);
-            var result = rgx.Replace(oldText, newText);
-
-            return result;
         }
     }
 }
