@@ -41,7 +41,7 @@ namespace PdfReaderApp
             return pdfContent;
         }
 
-        public static List<string> ArrangeText()
+        public static List<ProductData> ProductList()
         {
             var text = RegexServices.GetTextByLine(GetTextFromPdf());
             var textList = new List<string>();
@@ -52,7 +52,7 @@ namespace PdfReaderApp
                 if (Regex.Match(line, RegexPattern.MatchProducts).Success &&
                     Regex.Match(line, RegexPattern.MatchPrices).Success)
                 {
-                    var resultText = RegexServices.ReplaceText(line, " ", RegexPattern.MatchWhiteSpaces);
+                    var resultText = RegexServices.ReplaceText(line, "", RegexPattern.MatchWhiteSpaces);
 
                     for (var i = 0; i < removeChars.Count; i++)
                     {
@@ -63,40 +63,30 @@ namespace PdfReaderApp
                 }
             }
 
-            foreach(var line in textList)
-            {
-                RegexServices.GetProductName(line);
-
-                Console.WriteLine(line);
-            }
-
-            return textList;
-        }
-
-        public static void RegexEditor()
-        {
             List<ProductData> productList = new List<ProductData>();
 
-            var products = ArrangeText();
-
-            foreach (var product in products)
+            foreach (var product in textList)
             {
-                Match m;
+                var productName = Regex.Match(product, RegexPattern.MatchProductName).Value;
 
-                if (Regex.Match(product, RegexPattern.MatchProducts).Success)
-                {
-                    productList.Add(new ProductData() { Nombre = $"{product}" });
-                }
+                var prices = RegexServices.ReplaceText(product, "", RegexPattern.MatchProductName);
+
+                var priceUnity = Regex.Match(prices, RegexPattern.MatchProductPriceAlDetalle).Value;
+
+                var priceLot = RegexServices.ReplaceText(prices, "", RegexPattern.MatchProductPriceAlDetalle);
+
+                productList.Add(new ProductData() { Nombre = productName, PrecioPorMayor = priceLot,
+                    PrecioAlDetalle = priceUnity
+                });
             }
 
-            productList.Add(new ProductData() { Nombre = "Apio", PrecioPorMayor = 10, PrecioAlDetalle = 13});
-
-            Console.WriteLine(productList);
+            return productList;
         }
+
 
         public static void WriteDataToCsv()
         {
-            var textList = ArrangeText();
+            var textList = ProductList();
             var csvOutput = Path.CsvOutput;
             var writer = new StreamWriter(csvOutput);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
@@ -105,7 +95,7 @@ namespace PdfReaderApp
 
             foreach (var item in textList)
             {
-                csv.WriteField(item);
+                csv.WriteField(item.ToString());
                 csv.NextRecord();
             }
 

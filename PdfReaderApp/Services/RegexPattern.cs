@@ -12,11 +12,11 @@ namespace PdfReaderApp.Services
 
         public static string MatchNewLine = ".+";
 
-        public static string MatchProductName = "[A-Za-z]";
+        public static string MatchProductName = "[A-Za-zÁÉÍÓÚáéíóú]+";
 
-        public static string MatchProductPricePorMayor = "[a-zA-Z0-9]";
+        public static string MatchProductPrice = @"\d+\.\d{0,2}";
 
-        public static string MatchProductPriceAlDetalle = "[a-zA-Z0-9]";
+        public static string MatchProductPriceAlDetalle = @"[^.0]\d+\.\d{0,2}$";
 
         public static string MatchStringLenght = "[a-zA-Z0-9]{0,50}$";
 
