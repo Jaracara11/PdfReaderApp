@@ -45,44 +45,27 @@ namespace PdfReaderApp
         {
             var text = RegexServices.GetTextByLine(GetTextFromPdf());
             var textList = new List<string>();
-            var removeChars = new List<string>(RegexPattern.CharsToRemove);
+            var removeChars = new List<string>(RegexPattern.CharactersToRemove);
 
             foreach (var line in text)
             {
-                if (Regex.Match(line, RegexPattern.MatchProducts).Success &&
-                    Regex.Match(line, RegexPattern.MatchPrices).Success)
+                if (Regex.Match(line, RegexPattern.MatchProductText).Success &&
+                    Regex.Match(line, RegexPattern.MatchPriceText).Success)
                 {
                     var resultText = RegexServices.ReplaceText(line, "", RegexPattern.MatchWhiteSpaces);
 
                     for (var i = 0; i < removeChars.Count; i++)
                     {
                         resultText = resultText.Replace(removeChars[i], "");
+                        resultText = resultText.Replace("Ñ", "NI");
+                        resultText = resultText.Replace("É", "E");
                     }
 
                     textList.Add(resultText);
                 }
             }
 
-            List<ProductData> productList = new List<ProductData>();
-
-            foreach (var product in textList)
-            {
-                var productName = Regex.Match(product, RegexPattern.MatchProductName).Value;
-
-                productName = productName.Replace("Ñ", "NIA");
-
-                var prices = RegexServices.ReplaceText(product, "", RegexPattern.MatchProductName);
-
-                var priceUnity = Regex.Match(prices, RegexPattern.MatchProductPriceAlDetalle).Value;
-
-                var priceLot = RegexServices.ReplaceText(prices, "", RegexPattern.MatchProductPriceAlDetalle);
-
-                productList.Add(new ProductData() { Nombre = productName, PrecioPorMayor = priceLot,
-                    PrecioAlDetalle = priceUnity
-                });
-            }
-
-            return productList;
+            return RegexServices.GetProductAndPrices(textList);
         }
 
         public static void WriteDataToCsv()

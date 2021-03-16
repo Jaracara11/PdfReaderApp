@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PdfReaderApp.Models;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace PdfReaderApp.Services
@@ -23,6 +24,30 @@ namespace PdfReaderApp.Services
             }
 
             return result;
+        }
+
+        public static List<ProductData> GetProductAndPrices(List<string> itemList)
+        {
+            var productList = new List<ProductData>();
+
+            var rgx = new Regex(RegexPattern.MatchProductsAndPrices);
+
+            foreach (var item in itemList)
+            {
+                MatchCollection matches = rgx.Matches(item);
+
+                foreach (Match match in matches)
+                {
+                    productList.Add(new ProductData()
+                    {
+                        Nombre = match.Groups["Product"].Value,
+                        PrecioPorMayor = match.Groups["PriceLot"].Value,
+                        PrecioAlDetalle = match.Groups["PriceUnit"].Value
+                    });
+                }
+            }
+
+            return productList;
         }
     }
 }
