@@ -64,14 +64,14 @@ namespace PdfReaderApp
                     textList.Add(resultText);
                 }
             }
-            
-            return textList;
+
+            return RegexServices.GetProductAndPrices(textList);
         }
 
         public static void WriteDataToCsv()
         {
-            var textList = ArrangeText();
-            var csvOutput = Options.CsvOutput;
+            var textList = ProductList();
+            var csvOutput = Path.CsvOutput;
             var writer = new StreamWriter(csvOutput);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
