@@ -1,16 +1,10 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace PdfReaderApp.Models
 {
-    public class Data
+    public class ProductData
     {
         public string Nombre { get; set; }
-        public decimal PrecioPorMayor { get; set; }
-        public decimal PrecioAlDetalle { get; set; }
-    }
-
-    public class Product
-    {
-        public static List<Data> ProductObj { get; set; }
+        public string PrecioPorMayor { get; set; }
+        public string PrecioAlDetalle { get; set; }
     }
 }

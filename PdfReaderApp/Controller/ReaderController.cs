@@ -2,6 +2,8 @@
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using PdfReaderApp.Models;
+using PdfReaderApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,11 +12,11 @@ using System.Text.RegularExpressions;
 
 namespace PdfReaderApp
 {
-    public class Reader
+    public class ReaderController
     {
         public static string GetTextFromPdf()
         {
-            var pdfPath = Options.PdfPath;
+            var pdfPath = Path.PdfPath;
             var pdfContent = "";
 
             PdfReader pdfReader = new(pdfPath);
@@ -39,50 +41,28 @@ namespace PdfReaderApp
             return pdfContent;
         }
 
-        public static void SaveTextFromPdf()
+        public static List<ProductData> ProductList()
         {
-            var text = GetTextFromPdf();
-            var textList = new List<string> { text };
-            var removeChars = new List<string>(Options.CharsToRemove);
-            var textOutput = Options.TextOutput;
-
-            try
-            {
-                for (var i = 0; i < textList.Count; i++)
-                {
-                    for (var x = 0; x < removeChars.Count; x++)
-                    {
-                        textList[i] = textList[i].Replace(removeChars[x], "");
-                    }
-                }
-
-                File.WriteAllLines(textOutput, textList);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        public static List<string> ArrangeText()
-        {
-            SaveTextFromPdf();
+            var text = RegexServices.GetTextByLine(GetTextFromPdf());
             var textList = new List<string>();
-            var lines = File.ReadAllLines(Options.TextOutput);
+            var removeChars = new List<string>(RegexPattern.CharactersToRemove);
 
-            try
+            foreach (var line in text)
             {
-                foreach (var line in lines)
+                if (Regex.Match(line, RegexPattern.MatchProductText).Success &&
+                    Regex.Match(line, RegexPattern.MatchPriceText).Success)
                 {
-                    if (Regex.Match(line, Options.RegexMatchProduct).Success)
+                    var resultText = RegexServices.ReplaceText(line, "", RegexPattern.MatchWhiteSpaces);
+
+                    for (var i = 0; i < removeChars.Count; i++)
                     {
-                        textList.Add(line);
+                        resultText = resultText.Replace(removeChars[i], "");
+                        resultText = resultText.Replace("Ñ", "NI");
+                        resultText = resultText.Replace("É", "E");
                     }
+
+                    textList.Add(resultText);
                 }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
             }
             
             return textList;
@@ -95,11 +75,14 @@ namespace PdfReaderApp
             var writer = new StreamWriter(csvOutput);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            //csv.WriteHeader<CsvHeaders>();
+            csv.WriteHeader<CsvHeaders>();
+            csv.NextRecord();
 
             foreach (var item in textList)
             {
-                csv.WriteField(item);
+                csv.WriteField(item.Nombre);
+                csv.WriteField(item.PrecioPorMayor);
+                csv.WriteField(item.PrecioAlDetalle);
                 csv.NextRecord();
             }
 
