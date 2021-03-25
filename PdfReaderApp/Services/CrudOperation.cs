@@ -27,7 +27,6 @@ namespace PdfReaderApp.Services
 
                 context.AddRange(productToSave);
                 context.SaveChanges();
-
             }
             catch (Exception ex)
             {

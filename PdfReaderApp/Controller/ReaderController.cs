@@ -43,7 +43,7 @@ namespace PdfReaderApp
 
         public static List<ProductData> ProductList()
         {
-            var text = RegexServices.GetTextByLine(GetTextFromPdf());
+            var text = RegexService.GetTextByLine(GetTextFromPdf());
             var textList = new List<string>();
             var removeChars = new List<string>(RegexPattern.CharactersToRemove);
 
@@ -52,7 +52,7 @@ namespace PdfReaderApp
                 if (Regex.Match(line, RegexPattern.MatchProductText).Success &&
                     Regex.Match(line, RegexPattern.MatchPriceText).Success)
                 {
-                    var resultText = RegexServices.ReplaceText(line, "", RegexPattern.MatchWhiteSpaces);
+                    var resultText = RegexService.ReplaceText(line, "", RegexPattern.MatchWhiteSpaces);
 
                     for (var i = 0; i < removeChars.Count; i++)
                     {
@@ -65,7 +65,7 @@ namespace PdfReaderApp
                 }
             }
 
-            return RegexServices.GetProductAndPrices(textList);
+            return RegexService.GetProductAndPrices(textList);
         }
 
         public static void WriteDataToCsv()

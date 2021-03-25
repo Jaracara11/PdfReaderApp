@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PdfReaderApp.Models;
-using System.Collections.Generic;
 
 namespace PdfReaderApp.Data
 {

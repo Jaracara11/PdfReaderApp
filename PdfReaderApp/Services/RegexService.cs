@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace PdfReaderApp.Services
 {
-    class RegexServices
+    class RegexService
     {
         public static string ReplaceText(string oldText, string newText, string pattern)
         {
