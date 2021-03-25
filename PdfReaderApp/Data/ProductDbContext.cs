@@ -9,7 +9,7 @@ namespace PdfReaderApp.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(@"Data Source=C:\Users\u29230\Source\Repos\PdfReaderApp\PdfReaderApp\Data\ProductDB.db;");
+            optionsBuilder.UseSqlite(Path.DataSource);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace PdfReaderApp
     {
         static void Main(string[] args)
         {
+            ReaderController.WriteDataToCsv();
             CrudOperation.SaveProducts();
         }
     }

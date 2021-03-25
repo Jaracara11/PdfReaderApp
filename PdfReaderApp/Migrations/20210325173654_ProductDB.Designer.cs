@@ -8,7 +8,7 @@ using PdfReaderApp.Data;
 namespace PdfReaderApp.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20210325155306_ProductDB")]
+    [Migration("20210325173654_ProductDB")]
     partial class ProductDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
