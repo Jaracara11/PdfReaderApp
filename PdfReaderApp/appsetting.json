@@ -1,0 +1,12 @@
+﻿{
+  "ConnectionStrings": {
+    "DefaultConnection": "C:/Users/Luis_Eduardo/Source/Repos/PdfReaderApp/PdfReaderApp/Data/ProductDB.db;"
+  },
+
+  "Path": [
+    {
+      "PdfPath": "C:/Users/Luis_Eduardo/desktop/Precios.pdf",
+      "CsvOutput": "C:/Users/Luis_Eduardo/desktop/Precios.csv"
+    }
+  ]
+}
